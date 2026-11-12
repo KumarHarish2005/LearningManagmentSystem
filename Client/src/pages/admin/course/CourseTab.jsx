@@ -9,15 +9,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import RichTextEditor from "@/components/ui/RichTextEditor";
-import { useDeleteCourseMutation, useEditCourseMutation, useGetCourseByIdQuery, usePublishCourseMutation } from "@/features/api/courseapi";
+import {
+  useDeleteCourseMutation,
+  useEditCourseMutation,
+  useGetCourseByIdQuery,
+  usePublishCourseMutation,
+} from "@/features/api/courseapi";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 const CourseTab = () => {
-
-
   const navigate = useNavigate();
   const [editCourse, { data, isLoading, isSuccess, error }] =
     useEditCourseMutation();
@@ -30,50 +33,61 @@ const CourseTab = () => {
     coursePrice: "",
     courseThumbnail: "",
   });
-  const params=useParams();
+  const params = useParams();
   const courseId = params.courseId;
-  const {data:courseByIdData,isLoading:courseByIdLoading,refetch}=useGetCourseByIdQuery(courseId,{refetchOnMountOrArgChange:true});
+  const {
+    data: courseByIdData,
+    isLoading: courseByIdLoading,
+    refetch,
+  } = useGetCourseByIdQuery(courseId, { refetchOnMountOrArgChange: true });
   const course = courseByIdData?.course;
- useEffect(() => {
-  if (course) {
-    setInput({
-      courseTitle: course.courseTitle || "",
-      courseSubTitle: course.courseSubTitle || "",
-      description: course.description || "",
-      category: course.category || "",
-      courseLevel: course.courseLevel || "",
-      coursePrice: course.coursePrice ?? "",
-      courseThumbnail: null,
-    });
+  useEffect(() => {
+    if (course) {
+      setInput({
+        courseTitle: course.courseTitle || "",
+        courseSubTitle: course.courseSubTitle || "",
+        description: course.description || "",
+        category: course.category || "",
+        courseLevel: course.courseLevel || "",
+        coursePrice: course.coursePrice ?? "",
+        courseThumbnail: null,
+      });
 
-    setPreviewThumbnail(course.courseThumbnail || "");
-  }
-}, [course]);
+      setPreviewThumbnail(course.courseThumbnail || "");
+    }
+  }, [course]);
   const [previewThumbnail, setPreviewThumbnail] = useState("");
 
-  const [publishCourse,{}] = usePublishCourseMutation()
+  const [publishCourse, {}] = usePublishCourseMutation();
 
   const changeEventHandler = (e) => {
     const { name, value } = e.target;
     setInput({ ...input, [name]: value });
   };
 
-  const [deleteCourse,{isLoading:deleteLoading,isSuccess:deleteSuccess,error:deleteError,refetch:deleteRefetch}]=useDeleteCourseMutation()
-  const deleteCourseHandeler = async()=>{
-     await deleteCourse(courseId);
-     deleteRefetch();
-  }
+  const [
+    deleteCourse,
+    {
+      isLoading: deleteLoading,
+      isSuccess: deleteSuccess,
+      error: deleteError,
+      refetch: deleteRefetch,
+    },
+  ] = useDeleteCourseMutation();
+  const deleteCourseHandeler = async () => {
+    await deleteCourse(courseId);
+    deleteRefetch();
+  };
 
-  useEffect(()=>{
-    if(deleteSuccess){
-      toast.success("Course Deleted")
+  useEffect(() => {
+    if (deleteSuccess) {
+      toast.success("Course Deleted");
       navigate(-1);
     }
-    if(deleteError){
-      toast.error(deleteError?.data?.message||"Course deletion unsuccessful")
+    if (deleteError) {
+      toast.error(deleteError?.data?.message || "Course deletion unsuccessful");
     }
-  },[deleteSuccess,deleteError])
-
+  }, [deleteSuccess, deleteError]);
 
   //get file
   const selectThumbnail = (e) => {
@@ -96,27 +110,25 @@ const CourseTab = () => {
     formData.append("courseLevel", input.courseLevel);
     formData.append("coursePrice", input.coursePrice);
     if (input.courseThumbnail) {
-  formData.append("courseThumbnail", input.courseThumbnail);
-}
+      formData.append("courseThumbnail", input.courseThumbnail);
+    }
 
-    await editCourse({courseData:formData,courseId});
-    navigate("/admin/courses")
+    await editCourse({ courseData: formData, courseId });
+    navigate("/admin/courses");
     console.log(input);
   };
 
-  const publishStatusHandler = async (action)=>{
+  const publishStatusHandler = async (action) => {
     try {
-      const response = await  publishCourse({courseId,query:action});
-      if(response.data){
-        toast.success(response?.data?.message)
+      const response = await publishCourse({ courseId, query: action });
+      if (response.data) {
+        toast.success(response?.data?.message);
         refetch();
       }
     } catch (error) {
-      toast.error("Failed to change status of course")
+      toast.error("Failed to change status of course");
     }
-  }
-
-  
+  };
 
   useEffect(() => {
     if (isSuccess) {
@@ -128,16 +140,16 @@ const CourseTab = () => {
   }, [isSuccess, error]);
   const isPublished = true;
   if (courseByIdLoading) {
-  return (
-    <div className="flex justify-center p-10">
-      <Loader2 className="h-8 w-8 animate-spin" />
-    </div>
-  );
-}
+    return (
+      <div className="flex justify-center p-10">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
-if (!course) {
-  return <p className="p-5">Course not found.</p>;
-}
+  if (!course) {
+    return <p className="p-5">Course not found.</p>;
+  }
   return (
     <Card>
       <CardHeader className="flex flex-row justify-between">
@@ -148,17 +160,21 @@ if (!course) {
           </CardDescription>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline"
-
-          disabled={courseByIdData?.course.lectures.length===0}
-          onClick={()=>publishStatusHandler(courseByIdData?.course.isPublished?"false":"true")}
-          >
-            {
-              courseByIdData?.course.isPublished?"Unpublish":"Publish"
+          <Button
+            variant="outline"
+            disabled={courseByIdData?.course.lectures.length === 0}
+            onClick={() =>
+              publishStatusHandler(
+                courseByIdData?.course.isPublished ? "false" : "true",
+              )
             }
+          >
+            {courseByIdData?.course.isPublished ? "Unpublish" : "Publish"}
           </Button>
-          
-          <Button disabled={deleteLoading} onClick={deleteCourseHandeler}>Remove Course</Button>
+
+          <Button disabled={deleteLoading} onClick={deleteCourseHandeler}>
+            Remove Course
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
@@ -202,16 +218,32 @@ if (!course) {
           <div className="flex items-center gap-5">
             <div>
               <Label>Category</Label>
-              <input
+              <select
                 id="category"
                 name="category"
                 value={input.category}
                 onChange={changeEventHandler}
-                type="text"
                 required
-                placeholder="e.g. Web Development"
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              >
+                <option value="" disabled>
+                  Select a category
+                </option>
+                <option value="Web Development">Web Development</option>
+                <option value="Python">Python</option>
+                <option value="AI">Artificial Intelligence</option>
+                <option value="Cloud Computing">Cloud Computing</option>
+                <option value="Maths">Mathematics</option>
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Biology">Biology</option>
+                <option value="Finance">Finance</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Management">Management</option>
+                <option value="Design">Design</option>
+                <option value="Photography">Photography</option>
+                <option value="Video Editing">Video Editing</option>
+              </select>
             </div>
             <div>
               <Label>Course Level</Label>

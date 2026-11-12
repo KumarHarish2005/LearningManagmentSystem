@@ -13,7 +13,8 @@ const AddCourse = () => {
     courseThumbnail: "",
   });
 
-  const [createCourse,{data,isLoading,error,isSuccess,isError}] = useCreateCourseMutation();
+  const [createCourse, { data, isLoading, error, isSuccess, isError }] =
+    useCreateCourseMutation();
   const changeHandler = (e) => {
     const { name, value } = e.target;
 
@@ -24,24 +25,26 @@ const AddCourse = () => {
   };
 
   const createCourseHandler = async (e) => {
-     e.preventDefault();
-      const finalCourseData = {
-    ...courseData,
-    coursePrice: Number(courseData.coursePrice)
-  };
-     await createCourse(finalCourseData);
-    
+    e.preventDefault();
+    const finalCourseData = {
+      ...courseData,
+      coursePrice: Number(courseData.coursePrice),
+    };
+    await createCourse(finalCourseData);
   };
 
   //for toast
-  useEffect(()=>{
-    if(isSuccess){
-      toast.success(data?.message||"Course created")
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data?.message || "Course created");
     }
-    if(isError){
-      toast.error(error?.data?.message||"Some problem occured while creating the course")
+    if (isError) {
+      toast.error(
+        error?.data?.message ||
+          "Some problem occured while creating the course",
+      );
     }
-  },[isSuccess,isError])
+  }, [isSuccess, isError]);
   return (
     <div className="w-full min-w-0 px-4 py-8 sm:px-6 lg:px-10 lg:py-10 bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 md:mt-20  ">
       {/* Heading */}
@@ -53,9 +56,10 @@ const AddCourse = () => {
       </div>
 
       {/* Form */}
-      <form 
-      onSubmit={createCourseHandler}
-      className="max-w-5xl mx-auto space-y-8">
+      <form
+        onSubmit={createCourseHandler}
+        className="max-w-5xl mx-auto space-y-8"
+      >
         {/* Basic Information */}
         <section className="border border-gray-200 dark:border-gray-800 rounded-xl p-4 sm:p-6 space-y-6">
           <div>
@@ -81,10 +85,6 @@ const AddCourse = () => {
               className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
             />
           </div>
-
-          
-
-          
         </section>
 
         {/* Course Settings */}
@@ -103,26 +103,37 @@ const AddCourse = () => {
               <label htmlFor="category" className="text-sm font-medium">
                 Category <span className="text-red-500">*</span>
               </label>
-              <input
+
+              <select
                 id="category"
                 name="category"
                 value={courseData.category}
-              onChange={changeHandler}
-                type="text"
+                onChange={changeHandler}
                 required
-                placeholder="e.g. Web Development"
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              >
+                <option value="" disabled>
+                  Select a category
+                </option>
+
+                <option value="Web Development">Web Development</option>
+                <option value="Python">Python</option>
+                <option value="AI">Artificial Intelligence</option>
+                <option value="Cloud Computing">Cloud Computing</option>
+                <option value="Maths">Mathematics</option>
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Biology">Biology</option>
+                <option value="Finance">Finance</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Management">Management</option>
+                <option value="Design">Design</option>
+                <option value="Photography">Photography</option>
+                <option value="Video Editing">Video Editing</option>
+              </select>
             </div>
-
-         
-           
-
-            
           </div>
         </section>
-
-        
 
         {/* Actions */}
         <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pb-8">

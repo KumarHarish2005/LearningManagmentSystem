@@ -2,17 +2,19 @@ import React, { useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+  
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (e) => {
     e.preventDefault();
-
+    
     if (!searchQuery.trim()) return;
-
-    console.log("Searching for:", searchQuery);
-    // Later: connect this to your course search API
+    navigate(`/course/search/?query=${searchQuery}`)
+    
   };
 
   return (
@@ -31,6 +33,7 @@ const HeroSection = () => {
         {/* Search Bar */}
         <form
           onSubmit={handleSearch}
+          
           className="mx-auto flex w-full max-w-2xl items-center gap-2 rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-950"
         >
           <Search className="ml-2 h-5 w-5 shrink-0 text-gray-400" />
@@ -53,7 +56,7 @@ const HeroSection = () => {
           </Button>
         </form>
 
-        <Button className='mt-10 bg-white dark:bg-gray- rounded-full hpverLbg-gray-200'>Explore Courses</Button>
+        <Button onClick={()=>navigate(`/course/search?query`)} className='mt-10 bg-white dark:bg-gray- rounded-full hpverLbg-gray-200'>Explore Courses</Button>
 
       </div>
     </section>
