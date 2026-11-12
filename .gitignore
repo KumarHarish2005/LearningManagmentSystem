@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Uploaded media
+uploads/
+
+# Build files
+dist/
+
+# Environment variables
+.env
+.env.*
+!.env.example
