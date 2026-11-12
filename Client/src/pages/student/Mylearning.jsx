@@ -8,105 +8,46 @@ import {
   BookPlus,
 } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import Course from "./Course";
+import { useGetPublishedCoursesQuery } from "@/features/api/courseapi";
+import { useSelector } from "react-redux";
+import { purchaseApi } from "@/features/api/purchaseapi";
 
 // Sample enrolled courses
-const courses = [
-  {
-    id: 1,
-    title: "Full Stack Web Development",
-    category: "Web Development",
-    instructor: "John Smith",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600",
-    progress: 75,
-    completedLectures: 30,
-    totalLectures: 40,
-  },
-  {
-    id: 2,
-    title: "Machine Learning A-Z",
-    category: "AI & ML",
-    instructor: "Sarah Johnson",
-    image: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600",
-    progress: 45,
-    completedLectures: 18,
-    totalLectures: 40,
-  },
-  {
-    id: 3,
-    title: "Data Structures & Algorithms",
-    category: "Programming",
-    instructor: "Alex Brown",
-    image: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=600",
-    progress: 100,
-    completedLectures: 35,
-    totalLectures: 35,
-  },
-];
 
 const Mylearning = () => {
-  const isLoading = false;
+  const { user } = useSelector((store) => store.auth);
+
+  const { data, isLoading, isSuccess, isError } = useGetPublishedCoursesQuery();
+
+  let courses = data?.courses || [];
+
+  courses = courses.filter((course) =>
+    course.enrolledStudents?.some(
+      (studentId) => studentId.toString() === user?._id,
+    ),
+  );
+
+  if (isLoading) {
+    return (
+      <>
+        <p className="teext-bold dark:text-white mt-20">Loading...</p>
+      </>
+    );
+  }
+  if (isError) {
+    return (
+      <>
+        <p className="teext-bold dark:text-white mt-20">Some error occured</p>
+      </>
+    );
+  }
 
   const totalCourses = courses.length;
-
-  const completedCourses = courses.filter(
-    (course) => course.progress === 100
-  ).length;
-
-  const inProgress = courses.filter(
-    (course) => course.progress > 0 && course.progress < 100
-  ).length;
-
-  const notStarted = courses.filter(
-    (course) => course.progress === 0
-  ).length;
-
-  const overallProgress = totalCourses
-    ? Math.round(
-        courses.reduce((sum, course) => sum + course.progress, 0) /
-          totalCourses
-      )
-    : 0;
-
-  const stats = [
-    {
-      title: "Enrolled",
-      value: totalCourses,
-      icon: BookOpen,
-      color: "text-blue-500",
-      bg: "bg-blue-500/10",
-    },
-    {
-      title: "Completed",
-      value: completedCourses,
-      icon: Trophy,
-      color: "text-green-500",
-      bg: "bg-green-500/10",
-    },
-    {
-      title: "In Progress",
-      value: inProgress,
-      icon: GraduationCap,
-      color: "text-orange-500",
-      bg: "bg-orange-500/10",
-    },
-    {
-      title: "Overall Progress",
-      value: `${overallProgress}%`,
-      icon: Clock,
-      color: "text-purple-500",
-      bg: "bg-purple-500/10",
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 pb-10 pt-24 text-gray-900 dark:bg-[#0A0A0A] dark:text-gray-100 sm:px-6 md:px-8 ">
@@ -114,7 +55,6 @@ const Mylearning = () => {
         <MyLearningSkeleton />
       ) : (
         <div className="mx-auto max-w-7xl space-y-7 sm:space-y-8">
-
           {/* Heading */}
           <div>
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
@@ -125,70 +65,11 @@ const Mylearning = () => {
             </p>
           </div>
 
-          {/* Statistics */}
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            {stats.map((stat) => {
-              const Icon = stat.icon;
-
-              return (
-                <Card
-                  key={stat.title}
-                  className="border-0 bg-white shadow-sm dark:bg-[#171717]"
-                >
-                  <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:gap-4 sm:p-5">
-                    <div className={`w-fit rounded-xl p-2.5 sm:p-3 ${stat.bg}`}>
-                      <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${stat.color}`} />
-                    </div>
-
-                    <div>
-                      <p className="text-xs text-muted-foreground sm:text-sm">
-                        {stat.title}
-                      </p>
-                      <h2 className="mt-1 text-xl font-bold sm:text-2xl">
-                        {stat.value}
-                      </h2>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-
-          {/* Overall Progress */}
-          {totalCourses > 0 && (
-            <Card className="border-0 bg-white shadow-sm dark:bg-[#171717]">
-              <CardHeader className="p-4 pb-2 sm:p-6 sm:pb-2">
-                <CardTitle className="text-base sm:text-lg">
-                  Overall Learning Progress
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent className="p-4 pt-2 sm:p-6 sm:pt-2">
-                <div className="mb-3 flex justify-between gap-3 text-sm">
-                  <span className="text-muted-foreground">
-                    Average course completion
-                  </span>
-                  <span className="font-semibold">
-                    {overallProgress}%
-                  </span>
-                </div>
-
-                <Progress value={overallProgress} className="h-3" />
-
-                <p className="mt-3 text-xs text-muted-foreground sm:text-sm">
-                  You've completed {completedCourses} out of {totalCourses} courses.
-                </p>
-              </CardContent>
-            </Card>
-          )}
-
           {/* Course Section */}
           <div className="space-y-5">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-bold sm:text-2xl">
-                  My Courses
-                </h2>
+                <h2 className="text-xl font-bold sm:text-2xl">My Courses</h2>
                 <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
                   Continue where you left off.
                 </p>
@@ -214,8 +95,8 @@ const Mylearning = () => {
                   </h3>
 
                   <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-                    You haven't enrolled in any courses. Explore our courses
-                    and start learning something new.
+                    You haven't enrolled in any courses. Explore our courses and
+                    start learning something new.
                   </p>
 
                   <Button
@@ -230,7 +111,7 @@ const Mylearning = () => {
             ) : (
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {courses.map((course) => (
-                  <Course key={course.id} course={course} />
+                  <Course key={course.id} course={course} purchased={"purchased"}/>
                 ))}
               </div>
             )}
@@ -245,7 +126,6 @@ const Mylearning = () => {
 const MyLearningSkeleton = () => {
   return (
     <div className="mx-auto max-w-7xl animate-pulse space-y-8">
-
       {/* Heading */}
       <div className="space-y-3">
         <div className="h-8 w-48 rounded-lg bg-gray-200 dark:bg-gray-800" />

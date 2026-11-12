@@ -1,18 +1,12 @@
-
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  ArrowRight,
-  BookOpen,
-  GraduationCap,
-  UserRound,
-} from "lucide-react";
+import { ArrowRight, BookOpen, GraduationCap, UserRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const Course = ({ course, onKnowMore }) => {
+const Course = ({ course, purchased, onKnowMore }) => {
   if (!course) return null;
 
   const {
@@ -39,7 +33,6 @@ const Course = ({ course, onKnowMore }) => {
   const navigate = useNavigate();
   return (
     <Card className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-xl dark:border-gray-800 dark:bg-[#171717] dark:hover:border-blue-800">
-
       {/* Thumbnail */}
       <div className="relative h-48 overflow-hidden bg-gray-100 dark:bg-gray-800">
         {courseThumbnail ? (
@@ -63,13 +56,10 @@ const Course = ({ course, onKnowMore }) => {
         <span className="absolute bottom-4 left-4 rounded-md bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
           {courseLevel || "Beginner"}
         </span>
-
-        
       </div>
 
       {/* Content */}
       <div className="flex flex-1 flex-col p-5">
-
         {/* Title and Subtitle */}
         <div className="mb-3">
           <h2 className="line-clamp-2 text-lg font-bold leading-snug text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
@@ -121,24 +111,25 @@ const Course = ({ course, onKnowMore }) => {
         </div>
 
         {/* Price and Action */}
-        <div className="mt-auto flex items-center justify-between gap-3">
-          <div>
-            <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
-              Course Price
-            </p>
+        {purchased !== "purchased" ? (
+          <div className="mt-auto flex items-center justify-between gap-3">
+            <div>
+              <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">
+                Course Price
+              </p>
 
-            <p className="text-2xl font-extrabold text-gray-900 dark:text-white">
-              {coursePrice === 0
-                ? "Free"
-                : `₹${coursePrice ?? 0}`}
-            </p>
+              <p className="text-2xl font-extrabold text-gray-900 dark:text-white">
+                {coursePrice === 0 ? "Free" : `₹${coursePrice ?? 0}`}
+              </p>
+            </div>
           </div>
-
+        ) : null}
+        <div className="mt-auto flex items-center justify-between gap-3">
           <Button
             onClick={() => navigate(`/course-detail/${_id}`)}
             className="gap-2 rounded-xl bg-blue-600 px-4 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-          >
-            Know More
+          > {purchased==="purchased"?"Continue Learning":"Know More"}
+            
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Button>
         </div>

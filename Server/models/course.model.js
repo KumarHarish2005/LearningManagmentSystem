@@ -30,10 +30,10 @@ const courseSchema  = new mongoose.Schema({
         type:String,
         default:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrBr5j4xYo1A5pwsCXML9SAUHTGNhl2zOXOY5b1S59K72qAIF4qcuIn2Q3&s=10"
     },
-    enrolledStudents:{
+    enrolledStudents:[{
         type:mongoose.Schema.Types.ObjectId,
         ref: "User"
-    },
+    }],
     lectures:[
         {
             type:mongoose.Schema.Types.ObjectId,

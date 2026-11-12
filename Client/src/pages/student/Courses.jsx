@@ -60,6 +60,7 @@ const Courses = () => {
                <Course
       key={course._id}
       course={course}
+      purchased={"notPurchased"}
       onKnowMore={(courseId) =>
         navigate(`/course-detail/${courseId}`)
       }/>
