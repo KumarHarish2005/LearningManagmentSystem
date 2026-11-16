@@ -9,7 +9,6 @@ import Courses from "./pages/student/Courses"
 import Mylearning from "./pages/student/Mylearning"
 import Myprofile from "./pages/student/Myprofile"
 import Sidebar from "./pages/admin/Sidebar"
-import Dashboard from "./pages/admin/Dashboard"
 import CourseTable from "./pages/admin/course/CourseTable"
 import AddCourse from "./pages/admin/course/AddCourse"
 import EditCourse from "./pages/admin/course/EditCourse"
@@ -18,6 +17,7 @@ import EditLecture from "./pages/admin/lecture/EditLecture"
 import CourseDetail from "./pages/student/CourseDetail"
 import CourseProgress from "./pages/student/CourseProgress"
 import SearchPage from "./pages/student/SearchPage"
+import InstructorDashboard from "./pages/admin/Dashboard"
 const appRouter = createBrowserRouter([
   {
     path:"/",
@@ -87,7 +87,7 @@ const appRouter = createBrowserRouter([
         children:[
           {
             path:"dashboard",
-            element:<Dashboard/>
+            element:<InstructorDashboard/>
           },
           {
             path:"courses",

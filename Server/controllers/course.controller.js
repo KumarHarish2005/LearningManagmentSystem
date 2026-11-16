@@ -394,8 +394,10 @@ export const getLectureById = async (req, res) => {
 //publish unpublish course
 export const togglePublishCourse = async (req, res) => {
     try {
+        
         const { courseId } = req.params;
         const { publish } = req.query;
+        console.log(publish)
 
         const course = await Course.findById(courseId);
         if (!course) {

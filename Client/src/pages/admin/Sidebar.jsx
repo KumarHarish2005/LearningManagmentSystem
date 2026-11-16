@@ -1,76 +1,89 @@
 
-import React, { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import React from "react";
+import { NavLink, Outlet } from "react-router-dom";
 import {
   ChartNoAxesColumn,
   SquareLibrary,
-  Menu,
-  X
 } from "lucide-react";
 
 const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const navItems = [
+    {
+      title: "Dashboard",
+      path: "dashboard",
+      icon: ChartNoAxesColumn,
+    },
+    {
+      title: "Courses",
+      path: "courses",
+      icon: SquareLibrary,
+    },
+  ];
 
-  const closeSidebar = () => setIsOpen(false);
+  const linkStyle = ({ isActive }) =>
+    `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
+      isActive
+        ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
+        : "text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800"
+    }`;
 
   return (
-    <div className="flex mt-16 min-h-screen w-full">
+    <div className="flex flex-col lg:flex-row mt-16 min-h-screen w-full bg-gray-50 dark:bg-gray-950">
 
-      {/* Mobile menu button */}
-<div className="fixed top-16 left-0 z-50 w-full lg:hidden bg-white dark:bg-gray-950 border-b dark:border-gray-700 p-3 dark:text-gray-200">
-  <button
-    onClick={() => setIsOpen(!isOpen)}
-    className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800"
-  >
-    {isOpen ? <X size={24} /> : <Menu size={24} />}
-  </button>
-</div>
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:block w-[250px] shrink-0 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+        <div className="sticky top-16 p-5">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-5 px-3">
+            Admin Panel
+          </h2>
 
-      {/* Overlay on mobile */}
-      {isOpen && (
-        <div
-          onClick={closeSidebar}
-          className="fixed inset-0 top-16 z-30 bg-black/50 lg:hidden"
-        />
-      )}
+          <nav className="space-y-2">
+            {navItems.map((item) => {
+              const Icon = item.icon;
 
-      {/* Sidebar */}
-      <aside
-        className={`
-          fixed top-16 left-0 z-40
-          w-[250px] h-[calc(100vh-4rem)]
-          border-r border-gray-300 dark:border-gray-700
-          bg-gray-100 dark:bg-gray-900 dark:text-white p-5
-          transition-transform duration-300
-          lg:sticky lg:translate-x-0
-          ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        `}
-      >
-        <div className="space-y-4">
-
-          <Link
-            to="dashboard"
-            onClick={closeSidebar}
-            className="flex items-center gap-3 rounded-lg p-3 hover:bg-gray-200 dark:hover:bg-gray-800 sm:my-20"
-          >
-            <ChartNoAxesColumn size={22} />
-            <h1>Dashboard</h1>
-          </Link>
-
-          <Link
-            to="courses"
-            onClick={closeSidebar}
-            className="flex items-center gap-3 rounded-lg p-3 hover:bg-gray-200 dark:hover:bg-gray-800"
-          >
-            <SquareLibrary size={22} />
-            <h1>Courses</h1>
-          </Link>
-
+              return (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  className={linkStyle}
+                >
+                  <Icon size={21} />
+                  <span>{item.title}</span>
+                </NavLink>
+              );
+            })}
+          </nav>
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 min-w-0 w-full bg-white dark:bg-gray-950 dark:text-gray-300 p-4 md:p-8">
+      {/* Mobile and Tablet Navigation */}
+      <div className="lg:hidden sticky top-16 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-3 py-3">
+        <div className="flex gap-3">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) =>
+                  `flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-3 text-sm font-medium transition-all ${
+                    isActive
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                  }`
+                }
+              >
+                <Icon size={19} />
+                <span>{item.title}</span>
+              </NavLink>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 bg-gray-50 dark:bg-gray-950 dark:text-gray-300">
         <Outlet />
       </main>
 
